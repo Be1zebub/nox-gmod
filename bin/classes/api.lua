@@ -1,5 +1,7 @@
-local http   = require('coro-http')
-local json   = require('json')
+local json   = {
+		encode = util.TableToJSON,
+		decode = util.JSONToTable
+}
 local format = string.format
 local insert = table.insert
 local class  = require('../class')
@@ -27,7 +29,12 @@ function api:deliver(data)
 
     insert(headers, {'Authorization', format('Bot %s', self._token)})
 
-    local origin, res = http.request(method, format('%s%s', BASE_URL, endpoint), headers, body)
+    local origin, res = HTTP({
+				method = method,
+				url = format('%s%s', BASE_URL, endpoint),
+				headers = headers,
+				body = body
+		})
 
     return json.decode(res), origin
 end
